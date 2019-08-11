@@ -66,9 +66,7 @@ class LinearRegression:
                 algorithm. Defaults to `True`.
         """
 
-        if self._include_bias:
-            X = self._add_ones(X)
-        
+        X = _maybe_add_ones(X)
         if method == 'normal equations':
             self._fit_by_normal_equations(X, y)
         elif method == 'gradient descent':
@@ -78,11 +76,12 @@ class LinearRegression:
             msg = "method must be one of 'normal equations' or 'gradent descent'"
             raise ValueError(msg)
      
-    def _add_ones(self, X):
+    def _maybe_add_ones(self, X):
         """Concatenates at right a column of ones to 2d array X. """
-        n_rows, _ = X.shape
-        ones = np.ones((n_rows, 1))
-        X = np.concatenate((ones, X), axis=-1)
+        if self._include_bias:        
+            n_rows, _ = X.shape
+            ones = np.ones((n_rows, 1))
+            X = np.concatenate((ones, X), axis=-1)
         return X
     
     def _fit_by_normal_equations(self, X, y):
@@ -162,6 +161,7 @@ class LinearRegression:
         Returns:
             (numpy.ndarray) : predictions made with trained coeficients. 
         """ 
+        X = self._maybe_add_ones(X)
         pred = self._compute_predictions(X, w=self.coef)[:, 0]
         return pred
         

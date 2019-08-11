@@ -10,7 +10,7 @@ Each method or model has its own folder, in which you can find, among others, th
 - `data.csv`, which is a toy dataset used to test the algorithm.
 - `notebook.ipynb`, where we can test our implementations and hopefully help you gain some insights along the way.
 
-Additionally, the `solutions` branch has a `TUTORIAL.md` file for each of the models explained, which is supposed to be a self contained blog post for the model in question.
+Additionally, the `solutions` branch may have a `TUTORIAL.md` file for each of the models explained, which is supposed to be a self contained blog post for the model in question.
 
 ## Contents
 1. Linear Regression
