@@ -1,10 +1,20 @@
-"""In this module we implement basic linear regression techniques. """
-
 from collections import defaultdict
 
 import numpy as np
 
-from lib.metrics import mean_squared_error
+def mean_squared_error(y_true, y_pred):
+    """Computes the mean squared error between to arrays.
+
+    mse = np.mean((y_true - y_pred)**2)
+    Args:
+        y_true (numpy.ndarray) : array of true values of shape (n_samples, ).
+        y_pred (numpy.ndarray) : array of predicted values of shape
+            (n_samples, ).
+
+    Returns:
+        float : the mean squared errors between `y_true` and `y_pred`.
+    """
+    return np.mean((y_true - y_pred)**2)
 
 class LinearRegression:
     """This class implements a linear regression model.
@@ -17,7 +27,7 @@ class LinearRegression:
         coef (numpy.array): the coeficients of the linear regression model.
             Note that this can only be accesed after the `fit` method has been
             called.
-        learning_curves (list): the learning curves of the training process.
+        learning_curves (dict): the learning curves of the training process.
             Note that this only make sense if you fit the model using the
             'gradient descent' method.
         
@@ -28,19 +38,32 @@ class LinearRegression:
         self._coef = None
         self._learning_curves = None
         
-    def fit(self, X, y, method, **kwargs):
-        """Train a linear regression models
+    def fit(self, X, y, method='normal equations', learning_rate=0.001,
+        num_iterations=100, tolerance=0.001, log_every_n_steps=0.1,
+        log_weights=True):
+        """Train a linear regression model.
         
         Args:
             X (numpy.ndarray): Predictor variables values
             y (numpy.ndarray): Target values
             method (str): either 'normal equations' or 'grandient descent'. If
                 you fit the model with 'gradient descent' you can access the
-                learning curves of the training process.
-                
-        Returns:
-            Returns `self` for convenient API.
-
+                learning curves of the training process. Defaults to 'normal equations'.
+            learning_rate (float): learning rate to use if using the gradient
+                descent method. Defaults to 0.001.
+            num_iterations (int): number of iterations for which to run gradient
+                descent. Defaults to 100.
+            tolerance (float): If using gradient descent, the algorithm will be
+                stoped if successive iterations do not decrease the mean squared
+                error bellow this value.
+            log_every_n_steps (float or int): When using the gradient descent
+                method, this value controls how often to log the loss function
+                and possibly the weights (if `log_weights` is set to `True`)
+                of the model. If float then it represents a fraction of the
+                `num_iterations` argument.
+            log_weights (bool): whether to log the weights when using gradient
+                descent method, which could be used to debug the learning
+                algorithm. Defaults to `True`.
         """
 
         if self._include_bias:
@@ -49,19 +72,18 @@ class LinearRegression:
         if method == 'normal equations':
             self._fit_by_normal_equations(X, y)
         elif method == 'gradient descent':
-            self._fit_by_gradient_descent(X, y)
+            self._fit_by_gradient_descent(X, y, learning_rate, num_iterations,
+                tolerance, log_every_n_steps, log_weights)
         else:
             msg = "method must be one of 'normal equations' or 'gradent descent'"
             raise ValueError(msg)
-        
-        return self
      
     def _add_ones(self, X):
         """Concatenates at right a column of ones to 2d array X. """
         n_rows, _ = X.shape
         ones = np.ones((n_rows, 1))
-        X_ = np.concatenate((ones, X), axis=-1)
-        return X_
+        X = np.concatenate((ones, X), axis=-1)
+        return X
     
     def _fit_by_normal_equations(self, X, y):
         """Fits a linear regression model using normal equations."""
@@ -72,28 +94,21 @@ class LinearRegression:
         self._coef = np.reshape(weights, (-1, ))
 
         
-    def _fit_by_gradient_descent(self, X, y, **kwargs):
+    def _fit_by_gradient_descent(self, X, y, learning_rate, num_iterations,
+        tolerance, log_every_n_steps, log_weights):
         """Fits a linear regression model using gradient descent"""
-        learning_rate = kwargs.get('learning_rate', 0.01)
-        num_iterations = kwargs.get('num_iterations', 10)
         
         logging = defaultdict(list)
-        log_every_n_steps = kwargs.get('log_every_n_steps', num_iterations)
-        log_loss = kwargs.get('log_loss', True)
-        log_weights = kwargs.get('log_weights', True)
-        
         num_variables = X.shape[1]
         w = np.random.randn(num_variables, 1)
-        
         for i in range(num_iterations):
             dw = self._compute_gradient(X, y, w)
             w = w - learning_rate * dw
             
             if i % log_every_n_steps == 0:
-                if log_loss:
-                    y_pred = self._compute_predictions(X, w=w)
-                    loss = mean_squared_error(y[:, 0], y_pred)
-                    logging['loss'].append(loss)
+                y_pred = self._compute_predictions(X, w=w)
+                loss = mean_squared_error(y[:, 0], y_pred)
+                logging['loss'].append(loss)
                 if log_weights:
                     logging['weights'].append(w)
             
