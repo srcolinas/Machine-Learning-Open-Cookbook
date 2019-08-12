@@ -39,7 +39,7 @@ class LinearRegression:
         self._learning_curves = None
         
     def fit(self, X, y, method='normal equations', learning_rate=0.001,
-        num_iterations=100, tolerance=0.001, log_every_n_steps=0.1,
+        num_iterations=100, tolerance=1e-10, log_every_n_steps=0.1,
         log_weights=True):
         """Train a linear regression model.
         
@@ -66,7 +66,8 @@ class LinearRegression:
                 algorithm. Defaults to `True`.
         """
 
-        X = _maybe_add_ones(X)
+        X = self._maybe_add_ones(X)
+        y = y[:, None]
         if method == 'normal equations':
             self._fit_by_normal_equations(X, y)
         elif method == 'gradient descent':
@@ -96,41 +97,52 @@ class LinearRegression:
     def _fit_by_gradient_descent(self, X, y, learning_rate, num_iterations,
         tolerance, log_every_n_steps, log_weights):
         """Fits a linear regression model using gradient descent"""
-        
+        if isinstance(log_every_n_steps, float):
+            log_every_n_steps = int(log_every_n_steps * num_iterations)
+
         logging = defaultdict(list)
         num_variables = X.shape[1]
         w = np.random.randn(num_variables, 1)
+        prev_loss = np.inf
         for i in range(num_iterations):
             dw = self._compute_gradient(X, y, w)
             w = w - learning_rate * dw
             
             if i % log_every_n_steps == 0:
                 y_pred = self._compute_predictions(X, w=w)
-                loss = mean_squared_error(y[:, 0], y_pred)
+                loss = mean_squared_error(y, y_pred)
                 logging['loss'].append(loss)
                 if log_weights:
                     logging['weights'].append(w)
+
+                if abs(loss - prev_loss) <= tolerance:
+                    break
             
-        self._coef = w
+        self._coef = np.reshape(w, (-1, ))
         logging = {k: tuple(values) for k, values in logging.items()}
         self._learning_curves = logging
        
     
-    def _compute_gradient(self, X, y, w):
+    def _compute_gradient(self, X, y, w=None, y_pred=None):
         """Computes the gradient of the mean mquared error loss function.
         
+        This method can take either `w` or `y_pred` to compute the gradient.
+
         Args:
             X (numpy.ndarray) : array of shape (n_samples, n_features).
             y (numpy.ndarray) : array of true values of shape (n_samples, )
-            w (numpy.ndarray) : array of shape (n_features, )
+            w (numpy.ndarray) : array of shape (n_features, ). Defaults to None.
+            y_pred (numpy.ndarray) : array of predicted values of shape
+                (n_samples, )
 
         Returns:
             The gradient of the mean squeared error loss function with
             respect to w.
 
         """
-        pred = self._compute_predictions(X, w=w)
-        diff = pred - y
+        if y_pred is None:
+            y_pred = self._compute_predictions(X, w)
+        diff = y_pred - y
         return np.mean(X * diff, axis=0)[..., None]
         
     def _compute_predictions(self, X, w):
@@ -142,13 +154,13 @@ class LinearRegression:
 
         Args:
             X (numpy.ndarray) : array of shape (n_samples, n_features).
-            w (numpy.ndarray) : array of shape (n_features, )
+            w (numpy.ndarray) : array of shape (n_features, 1)
 
         Returns:
             (numpy.ndarray) : array of shape (n_samples, 1) corresponding to
                 a prediction for each of the samples in X.
         """
-        return np.dot(X, w[:, None])
+        return np.dot(X, w)
             
     def predict(self, X):
         """Make predictions for a given input X.
@@ -162,7 +174,7 @@ class LinearRegression:
             (numpy.ndarray) : predictions made with trained coeficients. 
         """ 
         X = self._maybe_add_ones(X)
-        pred = self._compute_predictions(X, w=self.coef)[:, 0]
+        pred = self._compute_predictions(X, w=self.coef[:, None])[:, 0]
         return pred
         
     @property
@@ -177,7 +189,3 @@ class LinearRegression:
             msg = "You must first fit the model with the gradient descent method"
             raise RuntimeError(msg)
         return self._learning_curves
-
-
-class RidgeRegression(LinearRegression):
-    pass
