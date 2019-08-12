@@ -13,7 +13,7 @@ def mean_squared_error(y_true, y_pred):
     Returns:
         float : the mean squared errors between `y_true` and `y_pred`.
     """
-    return np.mean((y_true - y_pred)**2)
+    raise NotImplementedError
 
 class LinearRegression:
     """This class implements a linear regression model.
@@ -86,10 +86,9 @@ class LinearRegression:
     
     def _fit_by_normal_equations(self, X, y):
         """Fits a linear regression model using normal equations."""
-        XTX = np.dot(X.T, X)
-        XTX_inv = np.linalg.inv(XTX)
-        XTy = np.dot(X.T, y)
-        weights = np.dot(XTX_inv, XTy)
+        ### YOUR CODE HERE
+        weights = 
+        ##
         self._coef = np.reshape(weights, (-1, ))
 
         
@@ -104,9 +103,12 @@ class LinearRegression:
         w = np.random.randn(num_variables, 1)
         prev_loss = np.inf
         for i in range(num_iterations):
-            dw = self._compute_gradient(X, y, w)
-            w = w - learning_rate * dw
-            
+            ### YOUR CODE HERE
+            # Compute the gradients
+            dw = 
+            # Update the weight vector
+            w = 
+            ##
             if i % log_every_n_steps == 0:
                 y_pred = self._compute_predictions(X, w=w)
                 loss = mean_squared_error(y, y_pred)
@@ -116,7 +118,7 @@ class LinearRegression:
 
                 if abs(loss - prev_loss) <= tolerance:
                     break
-            
+
         self._coef = np.reshape(w, (-1, ))
         logging = {k: tuple(values) for k, values in logging.items()}
         self._learning_curves = logging
@@ -141,8 +143,10 @@ class LinearRegression:
         """
         if y_pred is None:
             y_pred = self._compute_predictions(X, w)
-        diff = y_pred - y
-        return np.mean(X * diff, axis=0)[..., None]
+        ### YOUR CODE HERE
+        grad = 
+        ## 
+        return grad
         
     def _compute_predictions(self, X, w):
         """Comutes a linear regression prediction.
@@ -159,7 +163,10 @@ class LinearRegression:
             (numpy.ndarray) : array of shape (n_samples, 1) corresponding to
                 a prediction for each of the samples in X.
         """
-        return np.dot(X, w)
+        ### YOUR CODE HERE
+        pred = 
+        ##
+        return pred
             
     def predict(self, X):
         """Make predictions for a given input X.
