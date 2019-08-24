@@ -14,8 +14,11 @@ Additionally, the `solutions` branch may have a `TUTORIAL.md` file for each of t
 
 ## Contents
 1. Linear Regression.
+
     a. Implementation of LinearRegression class by means of normal equations and the gradient descent algorithm.
+
     b. Use of the LinearRegression class to make non-linear regression problems.
+    
     c. Implementation of RidgeRegression class to tackle the problem of overfitting
 2. ...
 3. ...
