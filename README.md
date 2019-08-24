@@ -13,7 +13,10 @@ Each method or model has its own folder, in which you can find, among others, th
 Additionally, the `solutions` branch may have a `TUTORIAL.md` file for each of the models explained, which is supposed to be a self contained blog post for the model in question.
 
 ## Contents
-1. Linear Regression
+1. Linear Regression.
+    a. Implementation of LinearRegression class by means of normal equations and the gradient descent algorithm.
+    b. Use of the LinearRegression class to make non-linear regression problems.
+    c. Implementation of RidgeRegression class to tackle the problem of overfitting
 2. ...
 3. ...
 

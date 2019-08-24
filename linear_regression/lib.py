@@ -65,7 +65,7 @@ class LinearRegression:
                 algorithm. Defaults to `True`.
         """
 
-        X = self._maybe_add_ones(X)
+        X = self._maybe_add_ones(X.copy())
         y = y[:, None]
         if method == 'normal equations':
             self._fit_by_normal_equations(X, y)
@@ -160,7 +160,7 @@ class LinearRegression:
                 a prediction for each of the samples in X.
         """
         return np.dot(X, w)
-            
+
     def predict(self, X):
         """Make predictions for a given input X.
         
