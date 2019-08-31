@@ -141,8 +141,8 @@ class LinearRegression:
         """
         if y_pred is None:
             y_pred = self._compute_predictions(X, w)
-        diff = y_pred - y
-        return np.mean(X * diff, axis=0)[..., None]
+        diff = y - y_pred
+        return np.dot(-1*X.T, diff)
         
     def _compute_predictions(self, X, w):
         """Comutes a linear regression prediction.
@@ -188,3 +188,40 @@ class LinearRegression:
             msg = "You must first fit the model with the gradient descent method"
             raise RuntimeError(msg)
         return self._learning_curves
+
+
+class RidgeRegression(LinearRegression):
+    def __init__(self, reg, include_bias=True):
+        super().__init__(include_bias)
+        self._reg = reg
+
+    def _fit_by_normal_equations(self, X, y):
+        """Fits a linear regression model using normal equations."""
+        XTX = np.dot(X.T, X)
+        XTX_inv = np.linalg.inv(XTX + self._reg)
+        XTy = np.dot(X.T, y)
+        weights = np.dot(XTX_inv, XTy)
+        self._coef = np.reshape(weights, (-1, ))
+
+    def _compute_gradient(self, X, y, w=None, y_pred=None):
+        """
+        Computes the gradient of the mean mquared error loss function with
+        L2 regularization.
+        
+        This method can take either `w` or `y_pred` to compute the gradient.
+
+        Args:
+            X (numpy.ndarray) : array of shape (n_samples, n_features).
+            y (numpy.ndarray) : array of true values of shape (n_samples, )
+            w (numpy.ndarray) : array of shape (n_features, ). Defaults to None.
+            y_pred (numpy.ndarray) : array of predicted values of shape
+                (n_samples, )
+
+        Returns:
+            The gradient of the mean squeared error loss function with L2
+            regularization with respect to w.
+
+        """
+        if y_pred is None:
+            y_pred = self._compute_predictions(X, w)
+        return np.dot(-1*X.T, y - y_pred) + w
