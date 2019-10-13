@@ -20,7 +20,7 @@ Additionally, the `solutions` branch may have a `TUTORIAL.md` file for each of t
     b. Use of the LinearRegression class to make non-linear regression problems.
     
     c. Implementation of RidgeRegression class to tackle the problem of overfitting
-2. ...
+2. Logistic Regression.
 3. ...
 
 ## Contributors
