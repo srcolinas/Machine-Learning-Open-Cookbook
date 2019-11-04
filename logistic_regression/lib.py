@@ -81,7 +81,7 @@ class LogisticRegression:
         cost = -np.mean(y*np.log(y_pred) + (1-y)*np.log(1-y_pred))
         return cost
 
-    def _compute_gradient((self, X, y, w=None, y_pred=None):
+    def _compute_gradient(self, X, y, w=None, y_pred=None):
         """Computes the gradient of the cross entropy loss function.
         
         This method can take either `w` or `y_pred` to compute the gradient.
