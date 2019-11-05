@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 
-def plot_binary_classifcation(X, y, model=None, contour_alpha=0.1):
+def plot_binary_classifcation(X, y=None, model=None, contour_alpha=0.1, **kwargs):
     
     cmap = ListedColormap(['#00aeff', '#ff8400'])
     # plot the decision surface
@@ -17,7 +17,7 @@ def plot_binary_classifcation(X, y, model=None, contour_alpha=0.1):
         X_ = np.array([xx1.ravel(), xx2.ravel()]).T
         X_ = np.concatenate((np.ones((X_.shape[0], 1)), X_), axis=1)
     
-        z = model.predict(X_, return_probs=True)
+        z = model.predict(X_, **kwargs)
         z = np.reshape(z, xx1.shape)
         plt.contourf(xx1, xx2, z, alpha=contour_alpha, cmap=cmap)
     

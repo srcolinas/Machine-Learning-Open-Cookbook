@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 import numpy as np
 
 
@@ -6,9 +8,12 @@ def sigmoid(z):
     a = 1/(1+np.exp(-z))
     return a
 
+def binary_crossentropy(y_true, y_pred):
+    return -np.mean(y_true*np.log(y_pred) + (1-y_true)*np.log(1-y_pred))
+
 class LogisticRegression:
-    def __init__(self):
-        pass
+    def __init__(self, include_bias=True):
+        self._include_bias = include_bias
 
     def _maybe_add_ones(self, X):
         """Concatenates at right a column of ones to 2d array X. """
@@ -55,7 +60,7 @@ class LogisticRegression:
             
             if i % log_every_n_steps == 0:
                 y_pred = self._compute_predictions(X, w=w)
-                loss = mean_squared_error(y, y_pred)
+                loss = binary_crossentropy(y, y_pred)
                 logging['loss'].append(loss)
                 if log_weights:
                     logging['weights'].append(w)
@@ -66,20 +71,6 @@ class LogisticRegression:
         self._coef = np.reshape(w, (-1, ))
         logging = {k: tuple(values) for k, values in logging.items()}
         self._learning_curves = logging
-
-    def predict(self, X, return_probs=False):
-        pass
-
-    def _compute_predictions(self, X, w, return_probs=False):
-        probs = sigmoid(np.dot(X, w)[:, 0])
-        if return_probs:
-            return probs
-        else:
-            return (probs >= self.threshold)
-
-    def _compute_cost(self, y, y_pred):
-        cost = -np.mean(y*np.log(y_pred) + (1-y)*np.log(1-y_pred))
-        return cost
 
     def _compute_gradient(self, X, y, w=None, y_pred=None):
         """Computes the gradient of the cross entropy loss function.
@@ -99,44 +90,43 @@ class LogisticRegression:
 
         """
         if y_pred is None:
-            y_pred = self._compute_predictions(X, w, return_probs=True)
+            y_pred = self._compute_predictions(X, w)
         grad = np.dot(X.T, y_pred - y)/X.shape[0]
         return grad
 
     def _compute_predictions(self, X, w):
-        """Comutes a linear regression prediction.
-        
-        The prediction is done by the following equation for each of the
-        provided samples in X: 
-            `y = x0*w0 + x1*w1 + ... + xd*wd`
-
+        """Comutes the output probabilities of a logistic regression model.
+    
         Args:
             X (numpy.ndarray) : array of shape (n_samples, n_features).
             w (numpy.ndarray) : array of shape (n_features, 1)
 
         Returns:
-            (numpy.ndarray) : array of shape (n_samples, 1) corresponding to
+            (numpy.ndarray) : array of shape (n_samples, ) corresponding to
                 a prediction for each of the samples in X.
         """
         probs = sigmoid(np.dot(X, w)[:, 0])
-        if return_probs:
-            return probs
-        else:
-            return (probs >= self.threshold).astype(int)
+        return probs
 
-    def predict(self, X):
+    def predict(self, X, threshold=None):
         """Make predictions for a given input X.
         
         The model must first be fitted or a RunTimeException will be rised.
 
         Args:
             X (numpy.ndarray) : array of shape (n_samples, n_features)
+            threshold (float or None): probability threshold to discretize logistic regression
+                output.
         
         Returns:
             (numpy.ndarray) : predictions made with trained coeficients. 
         """ 
         X = self._maybe_add_ones(X)
         pred = self._compute_predictions(X, w=self.coef[:, None])
+
+        if threshold is not None:
+            pred = (pred >= threshold).astype(int)
+
         return pred
         
     @property
