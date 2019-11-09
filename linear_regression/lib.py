@@ -2,6 +2,7 @@ from collections import defaultdict
 
 import numpy as np
 
+
 def mean_squared_error(y_true, y_pred):
     """Computes the mean squared error between to arrays.
 
@@ -13,7 +14,8 @@ def mean_squared_error(y_true, y_pred):
     Returns:
         float : the mean squared errors between `y_true` and `y_pred`.
     """
-    return np.mean((y_true - y_pred)**2)
+    return np.mean((y_true - y_pred) ** 2)
+
 
 class LinearRegression:
     """This class implements a linear regression model.
@@ -31,15 +33,24 @@ class LinearRegression:
             'gradient descent' method.
         
     """
+
     def __init__(self, include_bias=True):
         self._include_bias = include_bias
 
         self._coef = None
         self._learning_curves = None
-        
-    def fit(self, X, y, method='normal equations', learning_rate=0.001,
-        num_iterations=100, tolerance=1e-10, log_every_n_steps=0.1,
-        log_weights=True):
+
+    def fit(
+        self,
+        X,
+        y,
+        method="normal equations",
+        learning_rate=0.001,
+        num_iterations=100,
+        tolerance=1e-10,
+        log_every_n_steps=0.1,
+        log_weights=True,
+    ):
         """Train a linear regression model.
         
         Args:
@@ -67,34 +78,48 @@ class LinearRegression:
 
         X = self._maybe_add_ones(X.copy())
         y = y[:, None]
-        if method == 'normal equations':
+        if method == "normal equations":
             self._fit_by_normal_equations(X, y)
-        elif method == 'gradient descent':
-            self._fit_by_gradient_descent(X, y, learning_rate, num_iterations,
-                tolerance, log_every_n_steps, log_weights)
+        elif method == "gradient descent":
+            self._fit_by_gradient_descent(
+                X,
+                y,
+                learning_rate,
+                num_iterations,
+                tolerance,
+                log_every_n_steps,
+                log_weights,
+            )
         else:
             msg = "method must be one of 'normal equations' or 'gradent descent'"
             raise ValueError(msg)
-     
+
     def _maybe_add_ones(self, X):
         """Concatenates at right a column of ones to 2d array X. """
-        if self._include_bias:        
+        if self._include_bias:
             n_rows, _ = X.shape
             ones = np.ones((n_rows, 1))
             X = np.concatenate((ones, X), axis=-1)
         return X
-    
+
     def _fit_by_normal_equations(self, X, y):
         """Fits a linear regression model using normal equations."""
         XTX = np.dot(X.T, X)
         XTX_inv = np.linalg.inv(XTX)
         XTy = np.dot(X.T, y)
         weights = np.dot(XTX_inv, XTy)
-        self._coef = np.reshape(weights, (-1, ))
+        self._coef = np.reshape(weights, (-1,))
 
-        
-    def _fit_by_gradient_descent(self, X, y, learning_rate, num_iterations,
-        tolerance, log_every_n_steps, log_weights):
+    def _fit_by_gradient_descent(
+        self,
+        X,
+        y,
+        learning_rate,
+        num_iterations,
+        tolerance,
+        log_every_n_steps,
+        log_weights,
+    ):
         """Fits a linear regression model using gradient descent"""
         if isinstance(log_every_n_steps, float):
             log_every_n_steps = int(log_every_n_steps * num_iterations)
@@ -106,22 +131,21 @@ class LinearRegression:
         for i in range(num_iterations):
             dw = self._compute_gradient(X, y, w)
             w = w - learning_rate * dw
-            
+
             if i % log_every_n_steps == 0:
                 y_pred = self._compute_predictions(X, w=w)
                 loss = mean_squared_error(y, y_pred)
-                logging['loss'].append(loss)
+                logging["loss"].append(loss)
                 if log_weights:
-                    logging['weights'].append(w)
+                    logging["weights"].append(w)
 
                 if abs(loss - prev_loss) <= tolerance:
                     break
-            
-        self._coef = np.reshape(w, (-1, ))
+
+        self._coef = np.reshape(w, (-1,))
         logging = {k: tuple(values) for k, values in logging.items()}
         self._learning_curves = logging
-       
-    
+
     def _compute_gradient(self, X, y, w=None, y_pred=None):
         """Computes the gradient of the mean mquared error loss function.
         
@@ -142,8 +166,8 @@ class LinearRegression:
         if y_pred is None:
             y_pred = self._compute_predictions(X, w)
         diff = y - y_pred
-        return np.dot(-1*X.T, diff)
-        
+        return np.dot(-1 * X.T, diff)
+
     def _compute_predictions(self, X, w):
         """Comutes a linear regression prediction.
         
@@ -171,17 +195,17 @@ class LinearRegression:
         
         Returns:
             (numpy.ndarray) : predictions made with trained coeficients. 
-        """ 
+        """
         X = self._maybe_add_ones(X)
         pred = self._compute_predictions(X, w=self.coef[:, None])[:, 0]
         return pred
-        
+
     @property
     def coef(self):
         if self._coef is None:
             raise RuntimeError("You must fit the model first")
         return self._coef
-        
+
     @property
     def learning_curves(self):
         if self._learning_curves is None:
@@ -201,7 +225,7 @@ class RidgeRegression(LinearRegression):
         XTX_inv = np.linalg.inv(XTX + self._reg)
         XTy = np.dot(X.T, y)
         weights = np.dot(XTX_inv, XTy)
-        self._coef = np.reshape(weights, (-1, ))
+        self._coef = np.reshape(weights, (-1,))
 
     def _compute_gradient(self, X, y, w=None, y_pred=None):
         """
@@ -224,4 +248,4 @@ class RidgeRegression(LinearRegression):
         """
         if y_pred is None:
             y_pred = self._compute_predictions(X, w)
-        return np.dot(-1*X.T, y - y_pred) + w
+        return np.dot(-1 * X.T, y - y_pred) + w
