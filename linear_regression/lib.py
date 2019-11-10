@@ -129,12 +129,12 @@ class LinearRegression:
         w = np.random.randn(num_variables, 1)
         prev_loss = np.inf
         for i in range(num_iterations):
-            dw = self._compute_gradient(X, y, w)
+            dw = self.compute_gradient(X, y, w)
             w = w - learning_rate * dw
 
             if i % log_every_n_steps == 0:
-                y_pred = self._compute_predictions(X, w=w)
-                loss = mean_squared_error(y, y_pred)
+                y_pred = self.compute_predictions(X, w=w)
+                loss = self.compute_loss(y, y_pred, w=w) # We add w here for convenience with child class
                 logging["loss"].append(loss)
                 if log_weights:
                     logging["weights"].append(w)
@@ -146,7 +146,12 @@ class LinearRegression:
         logging = {k: tuple(values) for k, values in logging.items()}
         self._learning_curves = logging
 
-    def _compute_gradient(self, X, y, w=None, y_pred=None):
+    @staticmethod
+    def compute_loss(y_true, y_pred, **kwargs):
+        return mean_squared_error(y_true, y_pred)
+
+    @staticmethod
+    def compute_gradient(X, y, w=None, y_pred=None):
         """Computes the gradient of the mean mquared error loss function.
         
         This method can take either `w` or `y_pred` to compute the gradient.
@@ -164,11 +169,12 @@ class LinearRegression:
 
         """
         if y_pred is None:
-            y_pred = self._compute_predictions(X, w)
+            y_pred = LinearRegression.compute_predictions(X, w)
         diff = y - y_pred
         return np.dot(-1 * X.T, diff)
 
-    def _compute_predictions(self, X, w):
+    @staticmethod
+    def compute_predictions(X, w):
         """Comutes a linear regression prediction.
         
         The prediction is done by the following equation for each of the
@@ -197,7 +203,7 @@ class LinearRegression:
             (numpy.ndarray) : predictions made with trained coeficients. 
         """
         X = self._maybe_add_ones(X)
-        pred = self._compute_predictions(X, w=self.coef[:, None])[:, 0]
+        pred = self.compute_predictions(X, w=self.coef[:, None])[:, 0]
         return pred
 
     @property
@@ -222,12 +228,17 @@ class RidgeRegression(LinearRegression):
     def _fit_by_normal_equations(self, X, y):
         """Fits a linear regression model using normal equations."""
         XTX = np.dot(X.T, X)
-        XTX_inv = np.linalg.inv(XTX + self._reg)
+        XTX_inv = np.linalg.inv(XTX + self._reg*np.eye(X.shape[1]))
         XTy = np.dot(X.T, y)
         weights = np.dot(XTX_inv, XTy)
         self._coef = np.reshape(weights, (-1,))
 
-    def _compute_gradient(self, X, y, w=None, y_pred=None):
+    @staticmethod
+    def compute_loss(y_true, y_pred, w=None):
+        return mean_squared_error(y_true, y_pred) + np.linalg.norm(w)
+
+    @staticmethod
+    def compute_gradient(X, y, w, y_pred=None):
         """
         Computes the gradient of the mean mquared error loss function with
         L2 regularization.
@@ -247,5 +258,5 @@ class RidgeRegression(LinearRegression):
 
         """
         if y_pred is None:
-            y_pred = self._compute_predictions(X, w)
+            y_pred = RidgeRegression.compute_predictions(X, w)
         return np.dot(-1 * X.T, y - y_pred) + w
