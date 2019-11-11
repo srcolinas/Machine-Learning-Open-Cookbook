@@ -81,7 +81,7 @@ class LogisticRegression:
                     print("I am breaking out of the loop")
                     break
 
-        self._coef = np.reshape(w, (-1,))
+        self._coef = w
         logging = {k: tuple(values) for k, values in logging.items()}
         self._learning_curves = logging
 
@@ -155,7 +155,7 @@ class LogisticRegression:
             (numpy.ndarray) : predictions made with trained coeficients. 
         """
         X = self._maybe_add_ones(X)
-        pred = self.compute_predictions(X, w=self.coef[:, None])[:, None]
+        pred = self.compute_predictions(X, w=self.coef)[:, None]
         if threshold is not None:
             pred = (pred >= threshold).astype(int)
         return pred
