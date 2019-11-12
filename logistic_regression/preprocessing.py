@@ -1,4 +1,5 @@
 """Preprocesing functions for solving toy datasets using logistic regression. """
+import homework.cli
 
 import numpy as np
 

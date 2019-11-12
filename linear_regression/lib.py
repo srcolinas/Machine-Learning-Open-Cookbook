@@ -17,6 +17,7 @@ def linear_prediction(X, w):
         (numpy.ndarray) : array of shape (n_samples, 1) corresponding to
             a prediction for each of the samples in X.
     """
+    
     preds = np.dot(X, w)
     return preds
 

@@ -1,16 +1,5 @@
 # Machine-Learning-Open-Cookbook
-This repository contains Machine Leanring implementations for anyone to study. This is suppose to be used as teaching or self-study material, so the repository is structured in two branches:
-
-- `solutions`, which includes Machine Learning implementations
-- `homeworks`, which include only class and function definitions so that anyone can try to implement the algorithms by them self. This is the main brach of the repository.
-
-Each method or model has its own folder, in which you can find, among others, the folowing files:
-
-- `lib.py`, which contains the class definitions and implementations.
-- `data.csv`, which is a toy dataset used to test the algorithm.
-- `notebook_[XX].ipynb`, where we can test our implementations and hopefully help you gain some insights along the way. The `XX` is used to denote the order in which it should be read.
-
-Additionally, the `solutions` branch may have a `TUTORIAL.md` file for each of the models explained, which is supposed to be a self contained blog post for the model in question.
+This repository contains Machine Leanring implementations for anyone to study. This is suppose to be used as teaching or self-study material.
 
 ## Contents
 1. Linear Regression.
@@ -20,8 +9,23 @@ Additionally, the `solutions` branch may have a `TUTORIAL.md` file for each of t
     b. Use of the LinearRegression class to make non-linear regression problems.
     
     c. Implementation of RidgeRegression class to tackle the problem of overfitting
-2. Logistic Regression.
+2. Logistic Regression: a gradient descent implementation.
 3. ...
+
+## Solutions vs homeworks
+Each method, model or algorithm has its own folder, in which you can find, among others, the folowing files:
+
+- `lib.py`, which contains the class and function definitions.
+- `notebook_[XX].ipynb`, where we can test our implementations and hopefully help you gain some insights along the way. The `XX` is used to denote the order in which it should be read.
+
+We use the [homework package](https://pypi.org/project/homework/0.0.1/) to make the necessesary files for this repository (homeworks and solutions). This help us easily create the programming assignments by implementing the working version of the library. 
+
+
+## How to contribue
+
+1. By finding errors in the implementation or discussion and reporting them via an issue (hopefully a PR).
+2. Adding new algorithms to the book, for which you will need to make the homework
+
 
 ## Contributors
 This Machine Learning Open Cookbook is possible with the help of the following enthusiasts:
