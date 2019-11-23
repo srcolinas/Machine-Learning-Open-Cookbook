@@ -9,7 +9,9 @@ def test_case2(X):
     dataset number 2 of the classification toy datasets using logistic
     regression.
     """
-    X_new = X**2
+    ## homework:start
+    X_new = 
+    ## homework:end
     return X_new
 
 def test_case3(X):
@@ -18,7 +20,10 @@ def test_case3(X):
     dataset number 3 of the classification toy datasets using logistic
     regression.
     """
-    return (X[:, 0] * X[:, 1])[:, None]
+    ## homework:start
+    X_new = 
+    ## homework:end
+    return X_new
 
 def test_case4(X):
     """
@@ -26,7 +31,10 @@ def test_case4(X):
     dataset number 4 of the classification toy datasets using logistic
     regression.
     """
-    return X
+    ## homework:start
+    X_new = 
+    ## homework:end
+    return X_new
 
 def test_case5(X):
     """
@@ -34,4 +42,7 @@ def test_case5(X):
     dataset number 5 of the classification toy datasets using logistic
     regression.
     """
-    return X
+    ## homework:start
+    X_new = 
+    ## homework:end
+    return X_new
