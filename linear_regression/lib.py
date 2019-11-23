@@ -17,8 +17,9 @@ def linear_prediction(X, w):
         (numpy.ndarray) : array of shape (n_samples, 1) corresponding to
             a prediction for each of the samples in X.
     """
-    
-    preds = np.dot(X, w)
+    ## homework:start
+    preds = 
+    ## homework:end
     return preds
 
 def mean_squared_error(y_true, y_pred):
@@ -32,7 +33,10 @@ def mean_squared_error(y_true, y_pred):
     Returns:
         float : the mean squared error between `y_true` and `y_pred`.
     """
-    return np.mean((y_true - y_pred) ** 2)
+    ## homework:start
+    loss = 
+    ## homework:end
+    return loss
 
 def mean_squared_error_gradient(X, y_true, y_pred):
     """Computes the gradient of the mean mquared error loss function.
@@ -49,11 +53,16 @@ def mean_squared_error_gradient(X, y_true, y_pred):
         respect to w.
 
     """
-    grad = np.dot(-1 * X.T, y_true - y_pred)
+    ## homework:start
+    grad = 
+    ## homework:end
     return grad
 
 def l2_regularized_mean_squared_error(y_true, y_pred, w, reg):
-    return mean_squared_error(y_true, y_pred) + reg * np.linalg.norm(w)
+    ## homework:start
+    loss = 
+    ## homework:end
+    return loss
 
 def l2_regularized_mean_squared_error_gradient(X, y_true, y_pred, w, reg):
     """
@@ -75,7 +84,9 @@ def l2_regularized_mean_squared_error_gradient(X, y_true, y_pred, w, reg):
         regularization with respect to w.
 
     """
-    grad = np.dot(-1 * X.T, y_true - y_pred) + reg*w
+    ## homework:start
+    grad = 
+    ## homework:end
     return grad
 
 
@@ -166,10 +177,14 @@ class LinearRegression:
 
     def _fit_by_normal_equations(self, X, y):
         """Fits a linear regression model using normal equations."""
-        XTX = np.dot(X.T, X)
-        XTX_inv = np.linalg.inv(XTX)
-        XTy = np.dot(X.T, y)
-        weights = np.dot(XTX_inv, XTy)
+        ## homework:start
+        # X transposed times X
+        XTX = 
+        # X transposed times y
+        XTy = 
+        # everything together
+        weights = 
+        ## homework:end
         self._coef = weights
 
     def _fit_by_gradient_descent(
@@ -255,15 +270,14 @@ class RidgeRegression(LinearRegression):
 
     def _fit_by_normal_equations(self, X, y):
         """Fits a linear regression model using normal equations."""
-        XTX = np.dot(X.T, X)
-        XTX_inv = np.linalg.inv(XTX + self._reg*np.eye(X.shape[1]))
-        XTy = np.dot(X.T, y)
-        weights = np.dot(XTX_inv, XTy)
+        ## homework:start
+        weights = 
+        ## homework:end
         self._coef = weights
 
     def _compute_loss(self, y_true, y_pred):
-        return regularized_mean_squared_error(y_true, y_pred, self._w, self._reg)
+        return l2_regularized_mean_squared_error(y_true, y_pred, self._w, self._reg)
 
     def _compute_gradient(self, X, y_true):
         y_pred = linear_prediction(X, self._w)
-        return regularized_mean_squared_error_gradient(X, y_true, y_pred, self._w, self._reg)   
+        return l2_regularized_mean_squared_error_gradient(X, y_true, y_pred, self._w, self._reg)   

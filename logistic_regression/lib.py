@@ -5,7 +5,9 @@ import numpy as np
 
 def sigmoid(z):
     """Computes the sigmoid activation function of z. """
-    a = 1 / (1 + np.exp(-z))
+    ## homework:start
+    a = 
+    ## homework:end
     return a
 
 class LogisticRegression:
@@ -98,9 +100,13 @@ class LogisticRegression:
             average (bool) : whether to return the loss element-wise or the
                 average across all elements.
         """
-        loss = -1 * (y_true * np.log(y_pred) + (1 - y_true) * np.log(1 - y_pred))
+        ## homework:start
+        loss = 
+        ## homework:end
         if average:
-            loss = np.mean(loss)
+            ## homework:start
+            loss = 
+            ## homework:end
         return loss
 
     @staticmethod
@@ -122,8 +128,13 @@ class LogisticRegression:
 
         """
         if y_pred is None:
-            y_pred = LogisticRegression.compute_predictions(X, w)
-        grad = np.dot(X.T, y_pred - y) / X.shape[0]
+            ## homework:start
+            y_pred = 
+            ## homework:end
+
+        ## homework:start
+        grad = 
+        ## homework:end
         return grad
 
     @staticmethod
@@ -138,7 +149,9 @@ class LogisticRegression:
             (numpy.ndarray) : array of shape (n_samples, ) corresponding to
                 a prediction for each of the samples in X.
         """
-        probs = sigmoid(np.dot(X, w))
+        ## homework:start
+        probs = 
+        ## homework:end
         return probs
 
     def predict(self, X, threshold=None):
@@ -157,7 +170,9 @@ class LogisticRegression:
         X = self._maybe_add_ones(X)
         pred = self.compute_predictions(X, w=self.coef)[:, None]
         if threshold is not None:
-            pred = (pred >= threshold).astype(int)
+            ## homework:start
+            pred = 
+            ## homework:end
         return pred
 
     @property
