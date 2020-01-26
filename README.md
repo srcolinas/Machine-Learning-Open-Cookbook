@@ -30,4 +30,3 @@ We use the [homework package](https://pypi.org/project/homework/0.0.1/) to make 
 ## Contributors
 This Machine Learning Open Cookbook is possible with the help of the following enthusiasts:
 - srcolinas
-- ...
