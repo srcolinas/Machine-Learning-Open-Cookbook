@@ -1,4 +1,4 @@
-# Machine-Learning-Open-Cookbook
+# Machine Learning Open Cookbook
 This repository contains Machine Leanring implementations for anyone to study. This is suppose to be used as teaching or self-study material.
 
 ## Contents
